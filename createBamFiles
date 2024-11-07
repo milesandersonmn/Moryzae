@@ -18,3 +18,21 @@ bwa index GCA_000002495.2.rmdup.fasta.gz
 
 bwa mem ./reference/GCA_000002495.2.rmdup.fasta.gz ./SRAs/SRR6669189_1.fastq.gz ./SRAs/SRR6669189_2.fastq.gz -t 4 -M -R "@RG\tID:SRR6669189\tLB:lib1\tPL:illumina\tPU:unit1\tSM:SRR6669189" \
 | samtools view -b -h > ./bamFiles/SRR6669189.bam
+
+
+
+######################################################################################
+#Sort and index bam files
+######################################################################################
+
+samtools sort bamFiles/SRR6669189.bam  -o bamFiles/SRR6669189.sorted.bam
+
+samtools index bamFiles/SRR6669189.sorted.bam
+
+
+######################################################################################
+#Run HaplotypeCaller
+######################################################################################
+
+gatk --java-options "-Xmx4g" HaplotypeCaller -R reference/GCA_000002495.2.ChrOnly.fasta -I bamFiles/SRR6669156.sorted.bam -O VCFs/SRR6669156.g.vcf.gz -ERC BP_RESOLUTION \
+--output-mode EMIT_ALL_CONFIDENT_SITES -ploidy 1
